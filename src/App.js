@@ -13,14 +13,25 @@ function App() {
   const [lng, setLng] = useState(-97.5);
   const [lat, setLat] = useState(39);
   const [zoom, setZoom] = useState(3.1);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight)
+  const bounds = [
+    [-124.410607, 25.840438], // Southwest coordinates
+    [-66.981903, 47.459534] // Northeast coordinates
+  ];
+
+
+  window.addEventListener('resize', () => {
+    setWindowHeight(window.innerHeight);
+  });
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/dlearner/cla8f4l7s000d14rvjltvptme', //style url
       center: [lng, lat],
-      zoom: zoom
+      zoom: zoom,
+      // maxBounds: bounds // Set the map's geographical boundaries.
     });
   });
 
@@ -34,11 +45,11 @@ function App() {
   });
 
   return (
-    <div>
+    <div id='test'>
       <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
-      <div ref={mapContainer} className="map-container" />
+      <div ref={mapContainer} className="map-container" style={{ height: windowHeight }} />
     </div>
   );
 }
