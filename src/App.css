@@ -1,6 +1,7 @@
-/* .map-container {
-  height: 100%;
-} */
+.map-container {
+  height: 100vh;
+  width: 100vw;
+}
 
 .sidebar {
   background-color: rgba(35, 55, 75, 0.9);

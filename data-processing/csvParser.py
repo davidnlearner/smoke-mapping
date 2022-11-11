@@ -2,7 +2,7 @@ import csv
 from datetime import datetime, timedelta
 
 def csvParser():
-    with open('data-processing/weekly_county_data.csv', 'w', newline='') as outputfile:
+    with open('data-processing/monthly_county_data.csv', 'w', newline='') as outputfile:
         weeklywriter = csv.writer(outputfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         with open('data/full_daily_county_data.csv', 'r', newline='') as csvfile:
             basefile = csv.reader(csvfile, delimiter=' ', quotechar='|')
@@ -22,7 +22,7 @@ def csvParser():
                         lastdate = entryDate
                         weeklywriter.writerow(row)
                     else:
-                        if entryDate - lastdate >= timedelta(days = 7):
+                        if entryDate - lastdate >= timedelta(days = 30):
                             weeklywriter.writerow(row)
                             lastdate = entryDate
 
