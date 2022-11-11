@@ -43,7 +43,6 @@ def csvParser():
                         lastDateString = stringDate[:-2]
                         monthValue = roundedValue
 
-
 def csvToJSONConverter():
         with open('data-processing/monthly_county_data.csv', 'r', newline='') as csvfile:
             monthlyData = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -81,7 +80,6 @@ def csvToJSONConverter():
                     currentIndex += 1
         with open("data-processing/smokeData.json", "w") as outfile:
             json.dump(countyDictionary, outfile)
-            return True
 
 def jsonValidation():
     with open("data-processing/smokeData.json", "r") as inputfile:
@@ -90,8 +88,6 @@ def jsonValidation():
         print(len(dataDictionary["1001"]))
         print(len(dataDictionary["48009"]))
         print(len(dataDictionary["47185"]))
-
-
 
 def findEarliestDate():
     with open('data/full_daily_county_data.csv', 'r', newline='') as csvfile:
@@ -207,9 +203,30 @@ def round_half_up(n, decimals=3):
     multiplier = 10 ** decimals
     return math.floor(n*multiplier + 0.5) / multiplier
 
+def combineGeoJsonWithData():
+    counter = 0
+    with open("data-processing/counties.geojson", "r") as geoJsonFile:
+        geoDictionary = json.load(geoJsonFile)
+        with open("data-processing/smokeData.json", "r") as dataFile:
+            dataDictionary = json.load(dataFile)
+            for feature in geoDictionary["features"]:
+                countyId = feature["properties"]["GEOID"]
+                if countyId in dataDictionary:
+                    smokeData = dataDictionary[countyId]
+                    feature["properties"]["smokeCoverAllDates"] = smokeData
+                else:
+                    print(f"county id {countyId} not found")
+                    smokeData = [0] * 180
+                    feature["properties"]["smokeCoverAllDates"] = smokeData
+                    counter += 1
+            with open("data-processing/mergedData.json", "w") as outfile:
+                json.dump(geoDictionary, outfile)
+    print(counter)
+
 if __name__ == '__main__':
     # csvParser()
     # findEarliestDate()
     # meanMedianMode()
     # csvToJSONConverter()
-    jsonValidation()
+    # jsonValidation()
+    combineGeoJsonWithData()

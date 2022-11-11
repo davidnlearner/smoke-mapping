@@ -14,6 +14,8 @@ function App() {
   const [mapboxMap, setMapboxMap] = useState(null);
   const [dateRangeFilter, setDateRangeFilter] = useState(null);
 
+  const [currentDate, setCurrentDate] = useState(200601);
+
   const [lng, setLng] = useState(-97.5);
   const [lat, setLat] = useState(39);
   const [zoom, setZoom] = useState(3.1);
@@ -48,6 +50,7 @@ function App() {
     });
 
     loadData();
+    setSmokeData();
   }, []);
 
   useEffect(() => {
@@ -58,18 +61,31 @@ function App() {
 
   }, [countyData]);
 
-  const loadData = async () => {
-    const countyResponse = await fetch('/data/counties.geojson');
-    const countyData = await countyResponse.json();
-    const csvResponse = await fetch('/data/monthly_county_data.csv');
-    const csvText = await csvResponse.text();
-    const csvData = csvParse(csvText);
-    countyData.features.forEach(feature => {
-      const countyId = feature.properties.GEOID;
-      const smokeData = csvData.find(row => row.GEOID === countyId).smokePM_pred;
-      feature.properties.smokeCover = Number(smokeData);
-    });
+  useEffect(() => {
+    setSmokeData(currentDate);
+  }, [currentDate]);
 
+  const loadData = async () => {
+    const countyResponse = await fetch('/data/mergedData.json');
+    const countyData = await countyResponse.json();
+    setCountyData(countyData);
+  };
+
+  const setSmokeData = async (currentDate) => {
+    const countyResponse = await fetch('/data/mergedData.json');
+    const countyData = await countyResponse.json();
+    // console.log(currentDate); it returns as non sometimes
+    // const year = currentDate / 100;
+    // const month = currentDate % 100;
+    const year = 2018;
+    const month = 10;
+    const index = (year - 2006) * 12 + month;
+    // console.log(index);
+
+    countyData.features.forEach(feature => {
+      feature.properties.smokeCover = Number(feature.properties.smokeCoverAllDates[index]);
+
+    });
     setCountyData(countyData);
   };
 
@@ -83,13 +99,15 @@ function App() {
           ['linear'],
           ['get', 'smokeCover'],
           0,
-          '#F2F12D',
+          '#FFD500',
           5,
-          '#EED322',
-          7,
-          '#E6B71E',
+          '#FEAA0F',
           10,
-          '#DA9C20'
+          '#FC851F',
+          25,
+          '#FB672E',
+          50,
+          '#FA4E3D'
         ], 'fill-opacity': .5
       }
     });
