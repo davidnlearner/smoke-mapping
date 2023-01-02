@@ -63,18 +63,16 @@ def csvToJSONConverter():
 
                 index = (rowDate.year - 2006) * 12 + rowDate.month
 
-                if count == 1: 
-                    continue
                 if currentGeoId == 0:
                     currentGeoId = rowGeoId
                 elif currentGeoId != rowGeoId:
-                    countyDictionary[currentGeoId] = countyList
+                    countyDictionary[currentGeoId.zfill(5)] = countyList
                     countyList = []
                     currentGeoId = rowGeoId
                     currentIndex = 1
                 else:
-                    while (index > currentIndex):
-                        countyList.append(0)
+                    while (index > currentIndex): #loop for dates
+                        countyList.append(None) #No data for this date
                         currentIndex += 1
                     countyList.insert(index, rowValue)
                     currentIndex += 1
@@ -216,7 +214,7 @@ def combineGeoJsonWithData():
                     feature["properties"]["smokeCoverAllDates"] = smokeData
                 else:
                     print(f"county id {countyId} not found")
-                    smokeData = [0] * 180
+                    smokeData = [None] * 180
                     feature["properties"]["smokeCoverAllDates"] = smokeData
                     counter += 1
             with open("data-processing/mergedData.json", "w") as outfile:

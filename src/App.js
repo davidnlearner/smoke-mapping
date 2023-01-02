@@ -11,10 +11,14 @@ function App() {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
+  const START_YEAR = 2006;
+  const START_MONTH = 1;
+
   const [mapboxMap, setMapboxMap] = useState(null);
   const [dateRangeFilter, setDateRangeFilter] = useState(null);
 
-  const [currentDate, setCurrentDate] = useState(200601);
+  const [currentDate, setCurrentDate] = useState(0);
+  const [datesLength, setDateLength] = useState(1);
 
   const [lng, setLng] = useState(-97.5);
   const [lat, setLat] = useState(39);
@@ -50,7 +54,9 @@ function App() {
     });
 
     loadData();
-    setSmokeData();
+    if (countyData !== null) {
+      setSmokeData();
+    }
   }, []);
 
   useEffect(() => {
@@ -62,66 +68,77 @@ function App() {
   }, [countyData]);
 
   useEffect(() => {
-    setSmokeData(currentDate);
+    if (countyData !== null) {
+      setSmokeData(currentDate);
+    }
   }, [currentDate]);
 
   const loadData = async () => {
     const countyResponse = await fetch('/data/mergedData.json');
     const countyData = await countyResponse.json();
+
+    countyData.features.forEach(feature => {
+      feature.properties.smokeCover = feature.properties.smokeCover || -1;
+      feature.properties.smokeCoverAllDates = feature.properties.smokeCoverAllDates.map(d => d === null ? -1 : d);
+    });
+
+    countyData.features.forEach(feature => {
+      feature.properties.smokeCover = Number(feature.properties.smokeCoverAllDates[currentDate]);
+    });
+
+    setDateLength(countyData.features[0].properties.smokeCoverAllDates.length);
     setCountyData(countyData);
   };
 
   const setSmokeData = async (currentDate) => {
-    const countyResponse = await fetch('/data/mergedData.json');
-    const countyData = await countyResponse.json();
-    // console.log(currentDate); it returns as non sometimes
-    // const year = currentDate / 100;
-    // const month = currentDate % 100;
-    const year = 2018;
-    const month = 10;
-    const index = (year - 2006) * 12 + month;
-    // console.log(index);
+    const year = Math.floor(currentDate / 12) + START_YEAR;
+    const month = currentDate % 12;
+    const date = new Date(`${year}-${month}-01`);
 
     countyData.features.forEach(feature => {
-      feature.properties.smokeCover = Number(feature.properties.smokeCoverAllDates[index]);
-
+      feature.properties.smokeCover = Number(feature.properties.smokeCoverAllDates[currentDate]);
     });
+
     setCountyData(countyData);
+    addCountyLayer(countyData, map);
   };
 
   const addCountyLayer = (countyData, map) => {
     const layerId = "county-data";
-    map.current.addSource(layerId, { type: 'geojson', data: countyData });
-    map.current.addLayer({
-      id: layerId, source: layerId, type: 'fill', paint: {
-        'fill-color': [
-          'interpolate',
-          ['linear'],
-          ['get', 'smokeCover'],
-          0,
-          '#FFD500',
-          5,
-          '#FEAA0F',
-          10,
-          '#FC851F',
-          25,
-          '#FB672E',
-          50,
-          '#FA4E3D'
-        ], 'fill-opacity': .5
-      }
-    });
+    // console.log(countyData);
+    if (map.current.getSource(layerId)) {
+      map.current.getSource(layerId).setData(countyData);
+    } else {
+      map.current.addSource(layerId, { type: 'geojson', data: countyData });
+      map.current.addLayer({
+        id: layerId, source: layerId, type: 'fill', paint: {
+          'fill-color': [
+            'interpolate',
+            ['linear'],
+            ['get', 'smokeCover'],
+            0,
+            '#FFD500',
+            5,
+            '#FEAA0F',
+            10,
+            '#FC851F',
+            25,
+            '#FB672E',
+            50,
+            '#FA4E3D'
+          ],
+          'fill-opacity': ["case", ["==", ["get", "smokeCover"], -1], 0, 0.5]
+        }
+      });
+    }
   };
-
-
-
-
 
 
   return (
     <div>
       <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+        <input type='range' min={0} max={datesLength} step={1} onChange={(e) => { setCurrentDate(e.target.value); }} />
       </div>
       <div ref={mapContainer} className="map-container" />
     </div>
