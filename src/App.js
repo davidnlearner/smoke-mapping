@@ -1,10 +1,13 @@
 import './App.css';
+import ControlBox from './components/ControlBox';
 import React, { useRef, useEffect, useState } from 'react';
 
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { csvParse } from 'd3-dsv';
+import { dateConversion } from './utils/dateUtils';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZGxlYXJuZXIiLCJhIjoiY2toeTBuN3BmMGJ4bjJxb2RxdWF4Njl0OCJ9.smv24AHKxEoZqLvWKcJOBw';
+import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import mapboxSecrets from './secrets/mapbox.json';
+
+mapboxgl.accessToken = mapboxSecrets.api_token;
 
 
 function App() {
@@ -17,7 +20,7 @@ function App() {
   const [mapboxMap, setMapboxMap] = useState(null);
   const [dateRangeFilter, setDateRangeFilter] = useState(null);
 
-  const [currentDate, setCurrentDate] = useState(0);
+  const [currentDate, setCurrentDate] = useState(10);
   const [datesLength, setDateLength] = useState(1);
 
   const [lng, setLng] = useState(-97.5);
@@ -91,9 +94,6 @@ function App() {
   };
 
   const setSmokeData = async (currentDate) => {
-    const year = Math.floor(currentDate / 12) + START_YEAR;
-    const month = currentDate % 12;
-    const date = new Date(`${year}-${month}-01`);
 
     countyData.features.forEach(feature => {
       feature.properties.smokeCover = Number(feature.properties.smokeCoverAllDates[currentDate]);
@@ -133,13 +133,9 @@ function App() {
     }
   };
 
-
   return (
     <div>
-      <div className="sidebar">
-        Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-        <input type='range' min={0} max={datesLength} step={1} onChange={(e) => { setCurrentDate(e.target.value); }} />
-      </div>
+      <ControlBox datesLength={datesLength} currentDate={currentDate} startYear={START_YEAR} setCurrentDate={setCurrentDate} />
       <div ref={mapContainer} className="map-container" />
     </div>
   );

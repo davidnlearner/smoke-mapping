@@ -3,15 +3,50 @@
   width: 100vw;
 }
 
-.sidebar {
-  background-color: rgba(35, 55, 75, 0.9);
+.control-box-wrapper {
   color: #fff;
-  padding: 6px 12px;
   font-family: monospace;
   z-index: 1;
   position: absolute;
   top: 0;
   left: 0;
-  margin: 12px;
+  margin: 30px 20px;
+
+}
+
+.control-box-title {
+  background-color: rgba(35, 55, 75, 0.9);
+  padding: auto;
+  margin: 0;
+  border: 1px solid #ccc;
+  width: fit-content;
+  padding: 12px;
   border-radius: 4px;
+}
+
+.control-box {
+  background-color: rgba(35, 55, 75, 0.9);
+  color: #fff;
+  padding: 12px 22px 6px;
+  font-family: monospace;
+  z-index: 1;
+
+  border: 1px solid #ccc;
+
+  border-radius: 4px;
+  width: 33vw;
+  max-width: 300px;
+}
+
+.MuiSlider-markLabel,
+.MuiSlider-mark {
+  color: #eee !important;
+}
+
+@media only screen and (max-width: 765px) {
+
+  .control-box {
+    width: 100vw;
+
+  }
 }
