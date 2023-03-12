@@ -26,7 +26,6 @@ const ControlBox = ({ datesLength, startYear, currentDate, setCurrentDate }) => 
 
     return (
         <div className="control-box-wrapper">
-            <p className="control-box-title">Display Date</p>
             < div className="control-box" >
                 <Slider size="small" defaultValue={currentDate} min={0} max={datesLength} step={1}
                     marks={marks}

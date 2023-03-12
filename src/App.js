@@ -1,5 +1,6 @@
 import './App.css';
 import ControlBox from './components/ControlBox';
+import Legend from './components/Legend';
 import React, { useRef, useEffect, useState } from 'react';
 
 import { dateConversion } from './utils/dateUtils';
@@ -31,6 +32,16 @@ function App() {
     [-124.410607, 25.5], // Southwest coordinates (west, south)
     [-66.981903, 49] // Northeast coordinates (east, north)
   ];
+  const legendColors = [0,
+    'green',
+    50,
+    'yellow',
+    100,
+    'orange',
+    200,
+    'red',
+    300,
+    'maroon'];
 
 
   window.addEventListener('resize', () => {
@@ -68,7 +79,7 @@ function App() {
     if (countyData === null) {
       return;
     }
-    addCountyLayer(countyData, map);
+    addCountyLayer(countyData, map, legendColors);
 
   }, [countyData]);
 
@@ -102,32 +113,25 @@ function App() {
     });
 
     setCountyData(countyData);
-    addCountyLayer(countyData, map);
+    addCountyLayer(countyData, map, legendColors);
   };
 
-  const addCountyLayer = (countyData, map) => {
+  const addCountyLayer = (countyData, map, legendColors) => {
     const layerId = "county-data";
-    // console.log(countyData);
+
     if (map.current.getSource(layerId)) {
       map.current.getSource(layerId).setData(countyData);
     } else {
       map.current.addSource(layerId, { type: 'geojson', data: countyData });
+    }
+    if (!map.current.getLayer(layerId)) {
       map.current.addLayer({
         id: layerId, source: layerId, type: 'fill', paint: {
           'fill-color': [
             'interpolate',
             ['linear'],
             ['get', 'smokeCover'],
-            0,
-            '#FFD500',
-            5,
-            '#FEAA0F',
-            10,
-            '#FC851F',
-            25,
-            '#FB672E',
-            50,
-            '#FA4E3D'
+            ...legendColors
           ],
           'fill-opacity': ["case", ["==", ["get", "smokeCover"], -1], 0, 0.5]
         }
@@ -137,7 +141,10 @@ function App() {
 
   return (
     <div>
-      <ControlBox datesLength={datesLength} currentDate={currentDate} startYear={START_YEAR} setCurrentDate={setCurrentDate} />
+      <div className='ui-wrapper'>
+        <ControlBox datesLength={datesLength} currentDate={currentDate} startYear={START_YEAR} setCurrentDate={setCurrentDate} />
+        <Legend legendColors={legendColors} />
+      </div>
       <div ref={mapContainer} className="map-container" />
     </div>
   );
