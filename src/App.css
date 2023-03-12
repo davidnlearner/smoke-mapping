@@ -49,4 +49,11 @@
     width: 100vw;
 
   }
+
+  .control-box-title {
+    display: none;
+  }
+
+
+
 }
