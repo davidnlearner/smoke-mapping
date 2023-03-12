@@ -203,27 +203,29 @@ def round_half_up(n, decimals=3):
 
 def combineGeoJsonWithData():
     counter = 0
-    with open("data-processing/counties.geojson", "r") as geoJsonFile:
-        geoDictionary = json.load(geoJsonFile)
-        with open("data-processing/smokeData.json", "r") as dataFile:
-            dataDictionary = json.load(dataFile)
-            for feature in geoDictionary["features"]:
-                countyId = feature["properties"]["GEOID"]
-                if countyId in dataDictionary:
-                    smokeData = dataDictionary[countyId]
-                    feature["properties"]["smokeCoverAllDates"] = smokeData
-                else:
-                    print(f"county id {countyId} not found")
-                    smokeData = [None] * 180
-                    feature["properties"]["smokeCoverAllDates"] = smokeData
-                    counter += 1
-            with open("data-processing/mergedData.json", "w") as outfile:
-                json.dump(geoDictionary, outfile)
+    with open("data-processing/new_counties.json", "r") as jsonFile:
+        geoDictionary = json.load(jsonFile)
+    with open("data-processing/smokeData.json", "r") as dataFile:
+        dataDictionary = json.load(dataFile)
+        for feature in geoDictionary["features"]:
+            countyId = feature["properties"]["STATE"] + feature["properties"]["COUNTY"]
+
+            if countyId in dataDictionary:
+                smokeData = dataDictionary[countyId]
+                feature["properties"]["smokeCoverAllDates"] = smokeData
+            else:
+                print(f"county id {countyId} not found")
+                smokeData = [None] * 180
+                feature["properties"]["smokeCoverAllDates"] = smokeData
+                counter += 1
+
+    with open("data-processing/mergedData.json", "w") as outfile:
+        json.dump(geoDictionary, outfile)
     print(counter)
 
 if __name__ == '__main__':
-    # csvParser()
     # findEarliestDate()
+    # csvParser() # full -> monthly
     # meanMedianMode()
     # csvToJSONConverter()
     # jsonValidation()

@@ -29,7 +29,7 @@ function App() {
   const [countyData, setCountyData] = useState(null);
   const bounds = [
     [-124.410607, 25.840438], // Southwest coordinates (west, south)
-    [-66.981903, 47.459534] // Northeast coordinates (east, north)
+    [-66.981903, 48.459534] // Northeast coordinates (east, north)
   ];
 
 
@@ -45,9 +45,9 @@ function App() {
       container: mapContainer.current,
       style: 'mapbox://styles/dlearner/cla8f4l7s000d14rvjltvptme', //style url
       center: [lng, lat],
-      zoom: zoom,
+      // zoom: zoom,
     });
-    map.current.fitBounds(bounds, { animate: false, padding: 10 });
+    map.current.fitBounds(bounds, { animate: false, padding: 30 });
     map.current.setMaxBounds(map.current.getBounds());
 
     map.current.on('move', () => {
@@ -60,6 +60,8 @@ function App() {
     if (countyData !== null) {
       setSmokeData();
     }
+
+    console.log(map.current.getBounds());
   }, []);
 
   useEffect(() => {
