@@ -28,8 +28,8 @@ function App() {
   const [zoom, setZoom] = useState(3.1);
   const [countyData, setCountyData] = useState(null);
   const bounds = [
-    [-124.410607, 25.840438], // Southwest coordinates (west, south)
-    [-66.981903, 48.459534] // Northeast coordinates (east, north)
+    [-124.410607, 25.5], // Southwest coordinates (west, south)
+    [-66.981903, 49] // Northeast coordinates (east, north)
   ];
 
 
@@ -47,7 +47,7 @@ function App() {
       center: [lng, lat],
       // zoom: zoom,
     });
-    map.current.fitBounds(bounds, { animate: false, padding: 30 });
+    map.current.fitBounds(bounds, { animate: false, padding: 32 });
     map.current.setMaxBounds(map.current.getBounds());
 
     map.current.on('move', () => {
