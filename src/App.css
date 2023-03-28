@@ -121,6 +121,14 @@ a:visited {
     right: 12px;
   }
 
+  .info-box {
+    width: unset;
+    margin: unset;
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+  }
+
 
   .control-box-title {
     display: none;
