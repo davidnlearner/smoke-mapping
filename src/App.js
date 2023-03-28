@@ -1,6 +1,7 @@
 import './App.css';
 import ControlBox from './components/ControlBox';
 import Legend from './components/Legend';
+import InfoBox from './components/InfoBox';
 import React, { useRef, useEffect, useState } from 'react';
 
 import { dateConversion } from './utils/dateUtils';
@@ -56,6 +57,7 @@ function App() {
       container: mapContainer.current,
       style: 'mapbox://styles/dlearner/cla8f4l7s000d14rvjltvptme', //style url
       center: [lng, lat],
+      maxZoom: 11
       // zoom: zoom,
     });
     map.current.fitBounds(bounds, { animate: false, padding: 32 });
@@ -71,8 +73,6 @@ function App() {
     if (countyData !== null) {
       setSmokeData();
     }
-
-    console.log(map.current.getBounds());
   }, []);
 
   useEffect(() => {
@@ -146,6 +146,7 @@ function App() {
         <Legend legendColors={legendColors} />
       </div>
       <div ref={mapContainer} className="map-container" />
+      <InfoBox />
     </div>
   );
 }

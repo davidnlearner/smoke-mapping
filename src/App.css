@@ -1,3 +1,14 @@
+a {
+  color: cyan;
+  text-decoration: none;
+}
+
+a:visited {
+  color: cyan;
+  text-decoration: none;
+}
+
+
 .map-container {
   height: 100vh;
   width: 100vw;
@@ -15,6 +26,7 @@
   left: 0;
   margin: 30px 20px;
   width: 33vw;
+  max-width: 380px;
 }
 
 .control-box-title {
@@ -58,10 +70,15 @@
   width: 100%;
 }
 
+.legend-title {
+  max-width: 50%;
+}
+
 .legend-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 2px;
 }
 
 .legend-color {
@@ -73,6 +90,25 @@
 .MuiSlider-mark {
   color: #eee !important;
 }
+
+.info-box {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #fff;
+  font-family: monospace;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 30px 20px;
+  width: 33vw;
+  max-width: 380px;
+  background-color: rgba(35, 55, 75, 0.9);
+  padding: 12px 22px;
+}
+
 
 
 @media only screen and (max-width: 765px) {

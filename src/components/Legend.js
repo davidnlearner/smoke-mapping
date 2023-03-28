@@ -7,7 +7,7 @@ const Legend = ({ legendColors }) => {
 
     return (
         <div className="legend-wrapper">
-            <div style={{ alignSelf: "center" }}>Air Quality Index</div>
+            <div className="legend-title" style={{ alignSelf: "center" }}> Max. micrograms per meter³ of PM2.5 </div>
             {values.map((value, i) => {
                 return (
                     <div className="legend-item">
